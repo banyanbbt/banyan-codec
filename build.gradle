@@ -1,0 +1,50 @@
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'maven'
+
+archivesBaseName = 'banyan-codec'
+description = 'BanYan Codec'
+group = 'org.banyan.common'
+version = '1.0.0'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+compileJava.options.encoding = 'UTF-8'
+buildDir = 'target'
+
+dependencies {
+  compile "ch.qos.logback:logback-classic:1.1.11"
+  testCompile "junit:junit:4.12"
+}
+
+repositories {
+  mavenLocal()
+  mavenCentral()
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+  classifier = 'sources'
+  from sourceSets.main.allSource
+}
+
+artifacts {
+  archives sourcesJar
+}
+
+compileJava {
+  options.fork = true
+  doLast {
+    jar {
+      excludes = ["logback.xml"]
+      manifest {
+        attributes("Implementation-Title": project.description,
+                "Automatic-Module-Name": project.group,
+                "Built-By": "BANYANBBT",
+                "Created-By": "Gradle",
+                "Build-Jdk": "1.8.0_171",
+                "Implementation-Version": project.version,
+                "Implementation-Date": java.time.ZonedDateTime.now())
+      }
+    }
+  }
+}
